@@ -50,20 +50,15 @@
     <Compile Include="Attributes\ColumnAttribute.cs" />
     <Compile Include="Attributes\DAL_AttributeBase.cs" />
     <Compile Include="Attributes\ParameterAttribute.cs" />
-    <Compile Include="ConnectionHelpers\SqlConnectionHelper.cs" />
     <Compile Include="Database\RepositoryBase.cs" />
-    <Compile Include="DataReaderGetters\SqlDataReaderGetter.cs" />
+    <Compile Include="Database\RepositoryHelper.cs" />
     <Compile Include="Factories\CommandOutputSourceFactory.cs" />
     <Compile Include="Factories\ReaderOutputSourceFactory.cs" />
-    <Compile Include="IDbCommandExecutors\SqlCommandExecutor.cs" />
-    <Compile Include="Interfaces\IDataReaderGetter.cs" />
-    <Compile Include="Interfaces\IDbCommandExecutor.cs" />
     <Compile Include="Interfaces\IOutputSourceFactory.cs" />
     <Compile Include="OutputSources\CommandOutputSource.cs" />
     <Compile Include="Interfaces\IOutputSource.cs" />
     <Compile Include="OutputSources\ReaderOutputSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ConnectionHelpers\ConnectionHelperBase.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
