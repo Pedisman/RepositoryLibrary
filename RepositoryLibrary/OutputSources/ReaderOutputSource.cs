@@ -1,16 +1,16 @@
 ﻿using RepositoryLibrary.Interfaces;
 using System;
-using System.Data.SqlClient;
+using System.Data;
 
 namespace RepositoryLibrary.OutputSources
 {
     public class ReaderOutputSource : IOutputSource
     {
-        private SqlDataReader _reader;
-        public ReaderOutputSource(object sqlReader)
+        private IDataReader _reader;
+        public ReaderOutputSource(object inputReader)
         {
-            SqlDataReader reader = sqlReader as SqlDataReader;
-            if (reader == null) throw new ArgumentException("sqlReader");
+            IDataReader reader = inputReader as IDataReader;
+            if (reader == null) throw new ArgumentException("inputReader");
             _reader = reader;
         }
         public object this[string key]
