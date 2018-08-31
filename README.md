@@ -1,5 +1,5 @@
 # RepositoryLibrary
-When using direct sql to implement my repository interfaces I noticed there tended to be a lot of repeated code and magic strings scattered throughout the code. This library uses a combination of custom attributes and reflection to tackle these issues and provide a tested clean and easy to use api.
+When using direct sql to implement my repository interfaces I noticed there tended to be a lot of repetition and magic strings scattered throughout the code. This library uses a combination of custom attributes and reflection to tackle these issues and provide a tested clean and easy to use api.
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 ### Prerequisites
