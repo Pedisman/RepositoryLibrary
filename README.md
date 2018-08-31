@@ -38,6 +38,10 @@ To use the repository API a user should create a repository class which inherits
 ```
 public class AccountRepository : RepositoryLibrary.Database.RepositoryBase, IAccountRepository
 {
+    public AccountRepository(string connectionString) : base(connectionString) // the connection string passed to the base class will be used to establish the connections in the underlying calls made through the API.
+    {
+    }
+
     public IEnumerable<Item> GetPurchaseHistory(User user)
     {
         using (SqlCommand command = new SqlCommand())
