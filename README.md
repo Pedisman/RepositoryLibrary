@@ -48,7 +48,7 @@ public class AccountRepository : RepositoryLibrary.Database.RepositoryBase, IAcc
         {            
             AddInputParameters(command, inputUser, new List<string>
             {
-                "@userId" // to prevent all parameters from being added by default we can add a filter list which contains the names of the parameters we wish to add
+                "@userId" // to prevent all properties from being added by default we can add a filter list which contains the parameter attribute names of only the properties we wish to add.
             });                
             return ExecuteReaderSP<Item>(command, "usp_GetPurchaseHistory");            
         }              
