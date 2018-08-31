@@ -9,7 +9,8 @@ Create a model and apply column and property attributes to the required properti
 Columm attributes should be used to link the table/output column name to the property.
 Parameter attributes should be used to link the parameter name and type to the property.
 A maximum of one column and one parameter attribute should be used per property.
-```public class User 
+```
+public class User 
 {
   [Column(Name="NAME")]
   [Parameter(Name = "@name", Type = System.Data.SqlDbType.VarChar, Length = 50)]
@@ -18,4 +19,5 @@ A maximum of one column and one parameter attribute should be used per property.
   [Column(Name="AGE")]
   [Parameter(Name = "@age", Type = System.Data.SqlDbType.Int)]
   public int Age { get; set; }
-}```
+}
+```
