@@ -34,6 +34,22 @@ namespace RepositoryLibrary.Database
         }
         #endregion
 
+        #region Conversion Helper
+        object ChangeType(object value, Type conversion)
+        {
+            var t = conversion;
+            if (t.IsGenericType && t.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+            {
+                if (value == null)
+                {
+                    return null;
+                }
+                t = Nullable.GetUnderlyingType(t);
+            }
+            return Convert.ChangeType(value, t);
+        }
+        #endregion
+
         #region Command Setup Helpers
         internal void SetupCommandHelper(SqlCommand command, SqlConnection connection, string commandText)
         {
@@ -98,9 +114,18 @@ namespace RepositoryLibrary.Database
             foreach (var entry in attrDictionary)
             {
                 var type = entry.Value.PropertyType;
-                entry.Value.SetValue(obj, Convert.ChangeType(src[entry.Key], type));
+                entry.Value.SetValue(obj, ChangeType(src[entry.Key], type));
             }
             return obj;
+        }
+
+        internal T ExecuteScalarHelper<T>(SqlCommand command, string commandText, Action<SqlCommand, SqlConnection, string> commandSetup)
+        {
+            using (SqlConnection connection = GetConnection())
+            {
+                commandSetup(command, connection, commandText);
+                return (T)ChangeType(command.ExecuteScalar(), typeof(T));                           
+            }
         }
 
         internal void ExecuteNonQueryHelper(SqlCommand command, string commandText, Action<SqlCommand, SqlConnection, string> commandSetup)
