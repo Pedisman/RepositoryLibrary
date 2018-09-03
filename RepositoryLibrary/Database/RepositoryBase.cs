@@ -36,6 +36,16 @@ namespace RepositoryLibrary.Database
             _repositoryHelper.ExecuteNonQueryHelper(command, commandText, _repositoryHelper.SetupStoredProcedure);
         }
 
+        protected T ExecuteScalar<T>(SqlCommand command, string commandText)
+        {
+            return _repositoryHelper.ExecuteScalarHelper<T>(command, commandText, _repositoryHelper.SetupTextCommand);
+        }
+
+        protected T ExecuteScalarSP<T>(SqlCommand command, string commandText)
+        {
+            return _repositoryHelper.ExecuteScalarHelper<T>(command, commandText, _repositoryHelper.SetupStoredProcedure);
+        }
+
         protected T ExecuteNonQuery<T>(SqlCommand command, string commandText, IEnumerable<string> filter = null) where T : class
         {
             return _repositoryHelper.ExecuteNonQueryHelper<T>(command, commandText, _repositoryHelper.SetupTextCommand, filter);
