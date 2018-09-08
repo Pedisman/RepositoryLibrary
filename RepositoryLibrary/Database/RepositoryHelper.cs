@@ -38,14 +38,14 @@ namespace RepositoryLibrary.Database
         object ChangeType(object value, Type conversion)
         {
             var t = conversion;
+            // Handle null types
             if (t.IsGenericType && t.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
             {
-                if (value == null)
-                {
-                    return null;
-                }
+                if (value == DBNull.Value) return null;
                 t = Nullable.GetUnderlyingType(t);
             }
+            // Handle value types
+            else if (value == DBNull.Value) return Activator.CreateInstance(t);
             return Convert.ChangeType(value, t);
         }
         #endregion
@@ -70,13 +70,13 @@ namespace RepositoryLibrary.Database
         #endregion
 
         #region Data extraction helpers
-        internal T GetResultFromCommand<T>(IDbCommand command, IEnumerable<string> filter) where T : class
+        internal T GetResultFromCommand<T>(IDbCommand command, params string[] filter) where T : class
         {
             var attrDictionary = GetDatabaseAttributes<ParameterAttribute>(typeof(T), filter);
             return ExecuteHelper<T>(_commandOutputSourceFactory.Create(command), attrDictionary);
         }
 
-        internal IEnumerable<T> GetResultFromReader<T>(IDataReader reader, IEnumerable<string> filter) where T : class
+        internal IEnumerable<T> GetResultFromReader<T>(IDataReader reader, params string[] filter) where T : class
         {
             Collection<T> result = new Collection<T>();
             while (reader.Read())
@@ -89,7 +89,7 @@ namespace RepositoryLibrary.Database
         #endregion
 
         #region ExecuteHelpers
-        internal Dictionary<string, PropertyInfo> GetDatabaseAttributes<A>(Type instanceType, IEnumerable<string> filter)
+        internal Dictionary<string, PropertyInfo> GetDatabaseAttributes<A>(Type instanceType, params string[] filter)
             where A : DAL_AttributeBase
         {
             Type attrType = typeof(A);
@@ -99,7 +99,7 @@ namespace RepositoryLibrary.Database
             {
                 if (!Attribute.IsDefined(prop, attrType)) continue;
                 var attr = prop.GetCustomAttribute(attrType) as A;
-                if (filter != null && !filter.Contains(attr.Name)) continue;
+                if (filter != null && filter.Count() != 0 && !filter.Contains(attr.Name)) continue;
                 string attrName = attr.Name;
                 if (string.IsNullOrWhiteSpace(attrName))
                     throw new Exception($"ColumAttribute name not specified: {instanceType.AssemblyQualifiedName}");
@@ -137,7 +137,7 @@ namespace RepositoryLibrary.Database
             }
         }
 
-        internal T ExecuteNonQueryHelper<T>(SqlCommand command, string commandText, Action<SqlCommand, SqlConnection, string> commandSetup, IEnumerable<string> filter)
+        internal T ExecuteNonQueryHelper<T>(SqlCommand command, string commandText, Action<SqlCommand, SqlConnection, string> commandSetup, params string[] filter)
             where T : class
         {
             using (SqlConnection connection = GetConnection())
@@ -148,7 +148,7 @@ namespace RepositoryLibrary.Database
             }
         }
 
-        internal IEnumerable<T> ExecuteReaderHelper<T>(SqlCommand command, string commandText, Action<SqlCommand, SqlConnection, string> commandSetup, IEnumerable<string> filter) where T : class
+        internal IEnumerable<T> ExecuteReaderHelper<T>(SqlCommand command, string commandText, Action<SqlCommand, SqlConnection, string> commandSetup, params string[] filter) where T : class
         {
             using (SqlConnection connection = GetConnection())
             {
@@ -170,7 +170,7 @@ namespace RepositoryLibrary.Database
             param.Value = value;
             return param;
         }
-        internal void AddParametersHelper<T>(SqlCommand command, T instance, ParameterDirection direction, IEnumerable<string> filter) where T : class
+        internal void AddParametersHelper<T>(SqlCommand command, T instance, ParameterDirection direction, params string[] filter) where T : class
         {
             Type instanceType = instance.GetType();
             Type attrType = typeof(ParameterAttribute);
@@ -179,7 +179,7 @@ namespace RepositoryLibrary.Database
             {
                 if (!Attribute.IsDefined(prop, attrType)) continue;
                 var attr = prop.GetCustomAttribute(attrType) as ParameterAttribute;
-                if (filter == null || filter.Contains(attr.Name))
+                if (filter == null || filter.Count() == 0 || filter.Contains(attr.Name))
                     command.Parameters.Add(CreateParameter(command, prop.GetValue(instance), attr, direction));
             }
         }
