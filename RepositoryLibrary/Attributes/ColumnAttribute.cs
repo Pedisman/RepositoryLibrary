@@ -1,6 +1,6 @@
 ﻿namespace RepositoryLibrary.Attributes
 {
-    public class ColumnAttribute : DAL_AttributeBase
+    public sealed class ColumnAttribute : DAL_AttributeBase
     {
     }
 }
