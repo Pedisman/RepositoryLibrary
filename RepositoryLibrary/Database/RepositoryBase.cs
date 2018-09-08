@@ -16,12 +16,12 @@ namespace RepositoryLibrary.Database
         }
 
         #region Client Methods
-        protected void AddInputParameters<T>(SqlCommand command, T instance, IEnumerable<string> filter = null) where T : class
+        protected void AddInputParameters<T>(SqlCommand command, T instance, params string[] filter) where T : class
         {
             _repositoryHelper.AddParametersHelper(command, instance, ParameterDirection.Input, filter);
         }
 
-        protected void AddOutputParameters<T>(SqlCommand command, T instance, IEnumerable<string> filter = null) where T : class
+        protected void AddOutputParameters<T>(SqlCommand command, T instance, params string[] filter) where T : class
         {
             _repositoryHelper.AddParametersHelper(command, instance, ParameterDirection.Output, filter);
         }
@@ -46,22 +46,22 @@ namespace RepositoryLibrary.Database
             return _repositoryHelper.ExecuteScalarHelper<T>(command, commandText, _repositoryHelper.SetupStoredProcedure);
         }
 
-        protected T ExecuteNonQuery<T>(SqlCommand command, string commandText, IEnumerable<string> filter = null) where T : class
+        protected T ExecuteNonQuery<T>(SqlCommand command, string commandText, params string[] filter) where T : class
         {
             return _repositoryHelper.ExecuteNonQueryHelper<T>(command, commandText, _repositoryHelper.SetupTextCommand, filter);
         }
 
-        protected T ExecuteNonQuerySP<T>(SqlCommand command, string commandText, IEnumerable<string> filter = null) where T : class
+        protected T ExecuteNonQuerySP<T>(SqlCommand command, string commandText, params string[] filter) where T : class
         {
             return _repositoryHelper.ExecuteNonQueryHelper<T>(command, commandText, _repositoryHelper.SetupStoredProcedure, filter);
         }
 
-        protected IEnumerable<T> ExecuteReader<T>(SqlCommand command, string commandText, IEnumerable<string> filter = null) where T : class
+        protected IEnumerable<T> ExecuteReader<T>(SqlCommand command, string commandText, params string[] filter) where T : class
         {
             return _repositoryHelper.ExecuteReaderHelper<T>(command, commandText, _repositoryHelper.SetupTextCommand, filter);
         }
 
-        protected IEnumerable<T> ExecuteReaderSP<T>(SqlCommand command, string commandText, IEnumerable<string> filter = null) where T : class
+        protected IEnumerable<T> ExecuteReaderSP<T>(SqlCommand command, string commandText, params string[] filter) where T : class
         {
             return _repositoryHelper.ExecuteReaderHelper<T>(command, commandText, _repositoryHelper.SetupStoredProcedure, filter);
         }
