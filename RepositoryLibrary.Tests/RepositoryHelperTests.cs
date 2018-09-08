@@ -74,7 +74,7 @@ namespace RepositoryLibrary.Tests
                 new TestClass { Name = "Cass", Age = 31 },
             };            
         }
-        #endregion       
+        #endregion
 
         [TestCase]
         public void SetupCommandHelper_CommandTextAndConnectionAddedToCommand()
@@ -148,7 +148,7 @@ namespace RepositoryLibrary.Tests
                 NoAttributeProp = null
             };
 
-            TestClass result = repositoryHelper.GetResultFromCommand<TestClass>(command, new List<string> { "@name" });
+            TestClass result = repositoryHelper.GetResultFromCommand<TestClass>(command, "@name");
 
             Assert.AreEqual(expected, result);
         }
@@ -168,7 +168,7 @@ namespace RepositoryLibrary.Tests
                 NoAttributeProp = null
             };
 
-            TestClass result = repositoryHelper.GetResultFromCommand<TestClass>(command, new List<string> { "@age" });
+            TestClass result = repositoryHelper.GetResultFromCommand<TestClass>(command, "@age");
 
             Assert.AreEqual(expected, result);
         }
@@ -201,7 +201,7 @@ namespace RepositoryLibrary.Tests
                 x.NoAttributeProp = null;
             }); // set all objects age to 0
 
-            var result = repositoryHelper.GetResultFromReader<TestClass>(reader, new List<string> { "NAME" });
+            var result = repositoryHelper.GetResultFromReader<TestClass>(reader, "NAME");
 
             CollectionAssert.AreEqual(expected, result);
         }
@@ -220,7 +220,7 @@ namespace RepositoryLibrary.Tests
                 x.NoAttributeProp = null;
             }); // set all objects age to 0
 
-            var result = repositoryHelper.GetResultFromReader<TestClass>(reader, new List<string> { "AGE" });
+            var result = repositoryHelper.GetResultFromReader<TestClass>(reader, "AGE");
 
             CollectionAssert.AreEqual(expected, result);
         }
@@ -230,7 +230,7 @@ namespace RepositoryLibrary.Tests
         {
             RepositoryHelper repositoryHelper = GetRepositoryHelper();
             Type t = typeof(TestClass);            
-            var dictionary = repositoryHelper.GetDatabaseAttributes<ColumnAttribute>(t, null);            
+            var dictionary = repositoryHelper.GetDatabaseAttributes<ColumnAttribute>(t);            
             PropertyInfo namePropertyInfo = t.GetProperty("Name");
             PropertyInfo agePropertyInfo = t.GetProperty("Age");
             Assert.AreEqual(namePropertyInfo, dictionary["NAME"]);
@@ -243,7 +243,7 @@ namespace RepositoryLibrary.Tests
         {
             RepositoryHelper repositoryHelper = GetRepositoryHelper();
             Type t = typeof(TestClass);
-            var dictionary = repositoryHelper.GetDatabaseAttributes<ColumnAttribute>(t, new List<string> { "NAME", "AGE" });
+            var dictionary = repositoryHelper.GetDatabaseAttributes<ColumnAttribute>(t, "NAME", "AGE");
             PropertyInfo namePropertyInfo = t.GetProperty("Name");
             PropertyInfo agePropertyInfo = t.GetProperty("Age");
             Assert.AreEqual(namePropertyInfo, dictionary["NAME"]);
@@ -256,7 +256,7 @@ namespace RepositoryLibrary.Tests
         {
             RepositoryHelper repositoryHelper = GetRepositoryHelper();
             Type t = typeof(TestClass);
-            var dictionary = repositoryHelper.GetDatabaseAttributes<ColumnAttribute>(t, new List<string> { "NAME" });
+            var dictionary = repositoryHelper.GetDatabaseAttributes<ColumnAttribute>(t, "NAME");
             PropertyInfo namePropertyInfo = t.GetProperty("Name");            
             Assert.AreEqual(namePropertyInfo, dictionary["NAME"]);            
             Assert.AreEqual(1, dictionary.Count);
@@ -267,7 +267,7 @@ namespace RepositoryLibrary.Tests
         {
             RepositoryHelper repositoryHelper = GetRepositoryHelper();
             Type t = typeof(TestClass);
-            var dictionary = repositoryHelper.GetDatabaseAttributes<ColumnAttribute>(t, new List<string> { "AGE" });
+            var dictionary = repositoryHelper.GetDatabaseAttributes<ColumnAttribute>(t, "AGE");
             PropertyInfo namePropertyInfo = t.GetProperty("Age");
             Assert.AreEqual(namePropertyInfo, dictionary["AGE"]);
             Assert.AreEqual(1, dictionary.Count);
@@ -278,7 +278,7 @@ namespace RepositoryLibrary.Tests
         {
             RepositoryHelper repositoryHelper = GetRepositoryHelper();
             Type t = typeof(TestClass);
-            var dictionary = repositoryHelper.GetDatabaseAttributes<ParameterAttribute>(t, null);
+            var dictionary = repositoryHelper.GetDatabaseAttributes<ParameterAttribute>(t);
             PropertyInfo namePropertyInfo = t.GetProperty("Name");
             PropertyInfo agePropertyInfo = t.GetProperty("Age");
             Assert.AreEqual(namePropertyInfo, dictionary["@name"]);
@@ -291,7 +291,7 @@ namespace RepositoryLibrary.Tests
         {
             RepositoryHelper repositoryHelper = GetRepositoryHelper();
             Type t = typeof(TestClass);
-            var dictionary = repositoryHelper.GetDatabaseAttributes<ParameterAttribute>(t, new List<string> { "@name", "@age" });
+            var dictionary = repositoryHelper.GetDatabaseAttributes<ParameterAttribute>(t, "@name", "@age");
             PropertyInfo namePropertyInfo = t.GetProperty("Name");
             PropertyInfo agePropertyInfo = t.GetProperty("Age");
             Assert.AreEqual(namePropertyInfo, dictionary["@name"]);
@@ -304,7 +304,7 @@ namespace RepositoryLibrary.Tests
         {
             RepositoryHelper repositoryHelper = GetRepositoryHelper();
             Type t = typeof(TestClass);
-            var dictionary = repositoryHelper.GetDatabaseAttributes<ParameterAttribute>(t, new List<string> { "@name" });
+            var dictionary = repositoryHelper.GetDatabaseAttributes<ParameterAttribute>(t, "@name");
             PropertyInfo namePropertyInfo = t.GetProperty("Name");            
             Assert.AreEqual(namePropertyInfo, dictionary["@name"]);            
             Assert.AreEqual(1, dictionary.Count);
@@ -315,10 +315,26 @@ namespace RepositoryLibrary.Tests
         {
             RepositoryHelper repositoryHelper = GetRepositoryHelper();
             Type t = typeof(TestClass);
-            var dictionary = repositoryHelper.GetDatabaseAttributes<ParameterAttribute>(t, new List<string> { "@age" });
+            var dictionary = repositoryHelper.GetDatabaseAttributes<ParameterAttribute>(t, "@age");
             PropertyInfo namePropertyInfo = t.GetProperty("Age");
             Assert.AreEqual(namePropertyInfo, dictionary["@age"]);
             Assert.AreEqual(1, dictionary.Count);
+        }
+
+        [TestCase]
+        public void AddParametersHelper_noFilter_allParametersAddedToCommand()
+        {
+            RepositoryHelper repoHelper = GetRepositoryHelper();
+            SqlCommand command = new SqlCommand();
+            TestClass testClass = new TestClass
+            {
+                Age = 15,
+                Name = "Bob"
+            };
+            repoHelper.AddParametersHelper(command, testClass, ParameterDirection.Input);
+            Assert.IsTrue(command.Parameters.Contains("@age"));
+            Assert.IsTrue(command.Parameters.Contains("@name"));
+            Assert.AreEqual(2, command.Parameters.Count);
         }
     }
 }
