@@ -39,14 +39,21 @@ namespace RepositoryLibrary.Database
         {
             var t = conversion;
             // Handle null types
-            if (t.IsGenericType && t.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+            if (Nullable.GetUnderlyingType(conversion) != null)
             {
-                if (value == DBNull.Value) return null;
+                if (value == null || value == DBNull.Value) return null;
                 t = Nullable.GetUnderlyingType(t);
             }
             // Handle value types
-            else if (value == DBNull.Value) return Activator.CreateInstance(t);
+            else if (value == null || value == DBNull.Value) return Activator.CreateInstance(t);
             return Convert.ChangeType(value, t);
+        }
+
+        public object GetValue(object obj, PropertyInfo prop)
+        {
+            var val = prop.GetValue(obj);
+            if (val == null) return DBNull.Value;
+            return val;
         }
         #endregion
 
@@ -180,7 +187,7 @@ namespace RepositoryLibrary.Database
                 if (!Attribute.IsDefined(prop, attrType)) continue;
                 var attr = prop.GetCustomAttribute(attrType) as ParameterAttribute;
                 if (filter == null || filter.Count() == 0 || filter.Contains(attr.Name))
-                    command.Parameters.Add(CreateParameter(command, prop.GetValue(instance), attr, direction));
+                    command.Parameters.Add(CreateParameter(command, GetValue(instance, prop), attr, direction));
             }
         }
         #endregion
