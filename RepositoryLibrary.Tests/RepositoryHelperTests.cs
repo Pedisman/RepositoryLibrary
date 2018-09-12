@@ -287,6 +287,23 @@ namespace RepositoryLibrary.Tests
         }
 
         [TestCase]
+        public void GetColumnAttributes_noFilter_checkPropertyInfo()
+        {
+            RepositoryHelper repositoryHelper = GetRepositoryHelper();
+            Type t = typeof(ClassWithNullableTypes);
+            var dictionary = repositoryHelper.GetDatabaseAttributes<ColumnAttribute>(t);            
+            PropertyInfo quantityPropertyInfo = t.GetProperty("Quantity");
+            PropertyInfo pricePropertyInfo = t.GetProperty("Price");
+            Type quantityT = dictionary["QUANTITY"].PropertyType;
+            bool quantityResult = Nullable.GetUnderlyingType(quantityT) != null;
+            Type priceT = dictionary["PRICE"].PropertyType;
+            bool priceResult = Nullable.GetUnderlyingType(priceT) != null;
+            Assert.AreEqual(quantityPropertyInfo, dictionary["QUANTITY"]);
+            Assert.AreEqual(pricePropertyInfo, dictionary["PRICE"]);
+            Assert.AreEqual(2, dictionary.Count);
+        }
+
+        [TestCase]
         public void GetParameterAttributes_filterNameAndAge_returnsAllNameAndAgeParameterAttributes()
         {
             RepositoryHelper repositoryHelper = GetRepositoryHelper();
@@ -335,6 +352,23 @@ namespace RepositoryLibrary.Tests
             Assert.IsTrue(command.Parameters.Contains("@age"));
             Assert.IsTrue(command.Parameters.Contains("@name"));
             Assert.AreEqual(2, command.Parameters.Count);
+        }
+
+        [TestCase]
+        public void AddParametersHelper_noFilterAndNullPropertyValue_allParametersAddedWithDBNullForNullProperty()
+        {
+            RepositoryHelper repoHelper = GetRepositoryHelper();
+            SqlCommand command = new SqlCommand();
+            TestClass testClass = new TestClass
+            {
+                Age = 15,
+                Name = null
+            };
+            repoHelper.AddParametersHelper(command, testClass, ParameterDirection.Input);
+            Assert.IsTrue(command.Parameters.Contains("@age"));
+            Assert.IsTrue(command.Parameters.Contains("@name"));
+            Assert.AreEqual(2, command.Parameters.Count);
+            Assert.AreEqual(DBNull.Value, command.Parameters["@name"].Value);
         }
     }
 }
