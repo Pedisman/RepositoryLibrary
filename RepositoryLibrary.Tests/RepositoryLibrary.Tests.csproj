@@ -76,6 +76,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="AttributeExtensionsTests.cs" />
+    <Compile Include="Models\ClassWithNullableTypes.cs" />
     <Compile Include="Models\ColumnFilterTestClass.cs" />
     <Compile Include="Models\TestClass.cs" />
     <Compile Include="RepositoryHelperTests.cs" />
