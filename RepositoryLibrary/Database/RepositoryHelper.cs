@@ -77,13 +77,13 @@ namespace RepositoryLibrary.Database
         #endregion
 
         #region Data extraction helpers
-        internal T GetResultFromCommand<T>(IDbCommand command, params string[] filter) where T : class
+        internal T GetResultFromCommand<T>(IDbCommand command, params string[] filter) where T : class, new()
         {
             var attrDictionary = GetDatabaseAttributes<ParameterAttribute>(typeof(T), filter);
             return ExecuteHelper<T>(_commandOutputSourceFactory.Create(command), attrDictionary);
         }
 
-        internal IEnumerable<T> GetResultFromReader<T>(IDataReader reader, params string[] filter) where T : class
+        internal IEnumerable<T> GetResultFromReader<T>(IDataReader reader, params string[] filter) where T : class, new()
         {
             Collection<T> result = new Collection<T>();
             while (reader.Read())
@@ -115,7 +115,7 @@ namespace RepositoryLibrary.Database
             return attrDictionary;
         }
 
-        internal T ExecuteHelper<T>(IOutputSource src, Dictionary<string, PropertyInfo> attrDictionary) where T : class
+        internal T ExecuteHelper<T>(IOutputSource src, Dictionary<string, PropertyInfo> attrDictionary) where T : class, new()
         {
             var obj = Activator.CreateInstance<T>();
             foreach (var entry in attrDictionary)
@@ -145,7 +145,7 @@ namespace RepositoryLibrary.Database
         }
 
         internal T ExecuteNonQueryHelper<T>(SqlCommand command, string commandText, Action<SqlCommand, SqlConnection, string> commandSetup, params string[] filter)
-            where T : class
+            where T : class, new()
         {
             using (SqlConnection connection = GetConnection())
             {
@@ -155,7 +155,8 @@ namespace RepositoryLibrary.Database
             }
         }
 
-        internal IEnumerable<T> ExecuteReaderHelper<T>(SqlCommand command, string commandText, Action<SqlCommand, SqlConnection, string> commandSetup, params string[] filter) where T : class
+        internal IEnumerable<T> ExecuteReaderHelper<T>(SqlCommand command, string commandText, Action<SqlCommand, SqlConnection, string> commandSetup, params string[] filter) 
+            where T : class, new()
         {
             using (SqlConnection connection = GetConnection())
             {
