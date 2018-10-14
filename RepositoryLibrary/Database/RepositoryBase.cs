@@ -46,22 +46,22 @@ namespace RepositoryLibrary.Database
             return _repositoryHelper.ExecuteScalarHelper<T>(command, commandText, _repositoryHelper.SetupStoredProcedure);
         }
 
-        protected T ExecuteNonQuery<T>(SqlCommand command, string commandText, params string[] filter) where T : class
+        protected T ExecuteNonQuery<T>(SqlCommand command, string commandText, params string[] filter) where T : class, new()
         {
             return _repositoryHelper.ExecuteNonQueryHelper<T>(command, commandText, _repositoryHelper.SetupTextCommand, filter);
         }
 
-        protected T ExecuteNonQuerySP<T>(SqlCommand command, string commandText, params string[] filter) where T : class
+        protected T ExecuteNonQuerySP<T>(SqlCommand command, string commandText, params string[] filter) where T : class, new()
         {
             return _repositoryHelper.ExecuteNonQueryHelper<T>(command, commandText, _repositoryHelper.SetupStoredProcedure, filter);
         }
 
-        protected IEnumerable<T> ExecuteReader<T>(SqlCommand command, string commandText, params string[] filter) where T : class
+        protected IEnumerable<T> ExecuteReader<T>(SqlCommand command, string commandText, params string[] filter) where T : class, new()
         {
             return _repositoryHelper.ExecuteReaderHelper<T>(command, commandText, _repositoryHelper.SetupTextCommand, filter);
         }
 
-        protected IEnumerable<T> ExecuteReaderSP<T>(SqlCommand command, string commandText, params string[] filter) where T : class
+        protected IEnumerable<T> ExecuteReaderSP<T>(SqlCommand command, string commandText, params string[] filter) where T : class, new()
         {
             return _repositoryHelper.ExecuteReaderHelper<T>(command, commandText, _repositoryHelper.SetupStoredProcedure, filter);
         }
